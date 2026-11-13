@@ -4,220 +4,318 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>UNBLOCKLED GAMES 87</title>
+<title>Tennis Legends</title>
 <style>
 *{box-sizing:border-box}
-body{margin:0;background:#080b18;color:white;font-family:Arial}
-header{text-align:center;padding:30px;background:#151b35;border-bottom:3px solid #8255ff}
-h1{color:#a98bff;font-size:32px}
-nav{display:flex;justify-content:center;gap:10px;flex-wrap:wrap;padding:18px;background:#10152a}
-button,a.btn{background:#754cff;color:white;padding:12px 18px;border:0;border-radius:9px;cursor:pointer;text-decoration:none;font-weight:bold}
-button:hover,a.btn:hover{background:#9a7aff}
-main{max-width:1100px;margin:auto;padding:20px}
-section{background:#151b30;padding:22px;border-radius:15px;margin:20px 0}
-h2{color:#a98bff}
-.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:15px}
-.card{background:#222943;padding:20px;text-align:center;border-radius:12px}
-input{padding:12px;border-radius:8px;border:1px solid #888;background:#0c1225;color:white;width:100%;margin:8px 0}
-iframe{width:100%;height:380px;border:0;border-radius:12px;background:#080b18}
-#court{width:100%;max-width:700px;background:#168447;border:4px solid white;border-radius:8px;display:block;margin:auto}
-.score{text-align:center;font-size:28px;margin:12px}
-footer{text-align:center;padding:30px;color:#aaa}
+body{margin:0;background:#101426;color:white;font-family:Arial}
+header{text-align:center;padding:20px;background:#1c2542}
+h1{margin:5px;color:#8cffb0}
+main{max-width:1050px;margin:auto;padding:16px}
+button,select{background:#33466c;color:white;border:0;padding:12px;border-radius:9px;cursor:pointer;margin:4px}
+button:hover{background:#506a9d}
+.screen{display:none}
+.screen.active{display:block}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(145px,1fr));gap:12px}
+.player{background:#202d4c;padding:13px;border-radius:12px;text-align:center;cursor:pointer;border:2px solid transparent}
+.player.selected{border-color:#83ffae}
+.avatar{font-size:48px;padding:12px}
+.stats{font-size:12px;color:#b9c9e8}
+.panel{background:#1b2541;border-radius:14px;padding:16px;margin:14px 0}
+canvas{width:100%;background:#328451;border:4px solid white;border-radius:8px}
+#score{text-align:center;font-size:26px;margin:12px}
+.hidden{display:none}
 </style>
 </head>
 <body>
-
 <header>
-<h1>🎮 UNBLOCKLED GAMES 87</h1>
-<p>YOUR ULTIMATE GAMING HUB</p>
+<h1>🎾 TENNIS LEGENDS</h1>
+<p>Choose your player. Rule the court.</p>
 </header>
 
-<nav>
-<a class="btn" href="#games">Games</a>
-<a class="btn" href="#eagler">Eaglercraft</a>
-<a class="btn" href="#tennis">1v1 Tennis</a>
-<a class="btn" href="#youtube">YouTube</a>
-<a class="btn" href="#tiktok">TikTok</a>
-</nav>
-
 <main>
-
-<section id="games">
-<h2>🔥 Mini Games</h2>
-<div class="grid">
-<div class="card">
-<h3>⭕ Tic Tac Toe</h3>
-<button onclick="tic()">Play</button>
-<div id="ticboard"></div>
+<section id="menu" class="screen active">
+<div class="panel">
+<h2>Choose your game</h2>
+<button onclick="openSetup('exhibition')">🎾 Exhibition</button>
+<button onclick="openSetup('championship')">🏆 Championship</button>
 </div>
-<div class="card">
-<h3>👆 Clicker</h3>
-<h2 id="clickscore">0</h2>
-<button onclick="clicks++ ; document.getElementById('clickscore').textContent=clicks">CLICK!</button>
-</div>
-<div class="card">
-<h3>🔢 Guess the Number</h3>
-<input id="guess" type="number" placeholder="1 to 20">
-<button onclick="guess()">Guess</button>
-<p id="guessresult"></p>
-</div>
+<div class="panel">
+<h2>Character collection</h2>
+<div id="collection" class="grid"></div>
 </div>
 </section>
 
-<section id="eagler">
-<h2>⛏️ Eaglercraft</h2>
-<p>Choose a version to open the Eaglercraft launcher.</p>
-<div class="grid">
-<div class="card"><h3>1.8.8</h3><a class="btn" href="https://eaglercraft.com/play/" target="_blank">PLAY</a></div>
-<div class="card"><h3>1.12.2</h3><a class="btn" href="https://eaglercraft.com/play/" target="_blank">PLAY</a></div>
-<div class="card"><h3>26.2</h3><a class="btn" href="https://eaglercraft.com/play/" target="_blank">CHECK VERSION</a></div>
+<section id="setup" class="screen">
+<div class="panel">
+<h2>Choose your players</h2>
+<p>Player 1</p>
+<select id="p1"></select>
+<p>Player 2 / Bot</p>
+<select id="p2"></select>
+<p>Game type</p>
+<select id="mode">
+<option value="bot">You vs Bot</option>
+<option value="two">Two players</option>
+<option value="watch">Bot vs Bot</option>
+</select>
+<p>Court</p>
+<select id="courtStyle">
+<option value="grass">Grass</option>
+<option value="clay">Clay</option>
+<option value="hard">Hard court</option>
+</select>
+<p>Points to win</p>
+<select id="points">
+<option>5</option><option>10</option><option>15</option>
+</select>
+<button onclick="begin()">START MATCH 🚀</button>
+<button onclick="goMenu()">BACK</button>
 </div>
-<p>Choose the matching version in the launcher if it is available.</p>
 </section>
 
-<section id="tennis">
-<h2>🎾 1 ON 1 TENNIS</h2>
-<div class="score">
-Player 1: <span id="s1">0</span>
-&nbsp; - &nbsp;
-Player 2: <span id="s2">0</span>
-</div>
-<canvas id="court" width="700" height="380"></canvas>
-<p style="text-align:center">Player 1: W / S keys | Player 2: ↑ / ↓ keys</p>
-<p style="text-align:center">First to 5 points wins!</p>
+<section id="match" class="screen">
+<div class="panel">
+<h2 id="matchTitle">Exhibition Match</h2>
+<div id="score">0 - 0</div>
+<canvas id="court" width="700" height="400"></canvas>
+<p id="instructions">Move with A and D. Press SPACE to serve.</p>
 <div style="text-align:center">
-<button onclick="resetTennis()">RESTART GAME</button>
+<button onclick="serve()">🎾 SERVE</button>
+<button onclick="pauseGame()">⏸ Pause</button>
+<button onclick="goMenu()">🏠 Menu</button>
+</div>
+<p id="status" style="text-align:center">Ready!</p>
 </div>
 </section>
 
-<section id="youtube">
-<h2>▶️ YouTube Videos</h2>
-<p>Paste a YouTube video link to watch it here.</p>
-<input id="yturl" placeholder="Paste YouTube video URL">
-<button onclick="loadYT()">WATCH VIDEO</button>
-<div id="ytbox"></div>
+<section id="champ" class="screen">
+<div class="panel">
+<h2>🏆 Championship</h2>
+<div id="bracket"></div>
+<button onclick="goMenu()">Home</button>
+</div>
 </section>
-
-<section id="tiktok">
-<h2>🎵 TikTok Videos</h2>
-<p>Paste a TikTok video link to watch it here.</p>
-<input id="tturl" placeholder="Paste TikTok video URL">
-<button onclick="loadTT()">WATCH VIDEO</button>
-<div id="ttbox"></div>
-</section>
-
 </main>
 
-<footer>UNBLOCKLED GAMES 87 © 2026</footer>
-
 <script>
-let clicks=0;
-let secret=Math.floor(Math.random()*20)+1;
+const players=[
+{name:"Volt",emoji:"⚡",speed:9,power:6,skill:"Lightning speed"},
+{name:"Blaze",emoji:"🔥",speed:6,power:10,skill:"Fire smash"},
+{name:"Shadow",emoji:"🥷",speed:10,power:6,skill:"Quick movement"},
+{name:"Frost",emoji:"❄️",speed:7,power:8,skill:"Ice precision"},
+{name:"Byte",emoji:"🤖",speed:8,power:8,skill:"Perfect accuracy"},
+{name:"Zorp",emoji:"👽",speed:7,power:9,skill:"Alien curve"},
+{name:"Titan",emoji:"🦾",speed:4,power:10,skill:"Heavy shots"},
+{name:"Ghost",emoji:"👻",speed:9,power:7,skill:"Ghost dash"},
+{name:"Dragon",emoji:"🐉",speed:7,power:10,skill:"Dragon smash"},
+{name:"Ninja Cat",emoji:"🐱",speed:10,power:5,skill:"Cat reflexes"},
+{name:"Wizard",emoji:"🧙",speed:6,power:9,skill:"Magic serve"},
+{name:"Golden King",emoji:"👑",speed:8,power:9,skill:"Royal power"}
+];
 
-function guess(){
- let n=Number(document.getElementById("guess").value);
- document.getElementById("guessresult").textContent=
- n===secret?"YOU WIN! 🎉":n<secret?"Too low!":"Too high!";
- if(n===secret)secret=Math.floor(Math.random()*20)+1;
+let selected=0;
+let game={},timer=null,paused=false;
+let tournament=0;
+
+function show(id){
+document.querySelectorAll('.screen').forEach(x=>x.classList.remove('active'));
+document.getElementById(id).classList.add('active');
+}
+function goMenu(){
+stop();
+show('menu');
+}
+function render(){
+let html='';
+players.forEach((p,i)=>{
+html+=`<div class="player ${selected===i?'selected':''}" onclick="selected=${i};render()">
+<div class="avatar">${p.emoji}</div>
+<strong>${p.name}</strong>
+<div class="stats">${p.skill}<br>Speed ${p.speed}/10<br>Power ${p.power}/10</div>
+</div>`;
+});
+document.getElementById('collection').innerHTML=html;
+let options=players.map((p,i)=>`<option value="${i}">${p.emoji} ${p.name}</option>`).join('');
+document.getElementById('p1').innerHTML=options;
+document.getElementById('p2').innerHTML=options;
+document.getElementById('p1').value=selected;
+document.getElementById('p2').value=(selected+1)%players.length;
+}
+render();
+
+function openSetup(type){
+game.type=type;
+if(type==='championship'){
+show('champ');
+startTournament();
+}else show('setup');
 }
 
-function tic(){
- let b=["","","","","","","","",""],turn="X";
- let board=document.getElementById("ticboard");
- function draw(){
- board.innerHTML="";
- b.forEach((v,i)=>{
- let btn=document.createElement("button");
- btn.textContent=v||"-";
- btn.style.margin="3px";
- btn.style.width="48px";
- btn.onclick=()=>{
- if(b[i]||win())return;
- b[i]=turn;
- if(win()){draw();alert(turn+" wins!");return;}
- turn=turn==="X"?"O":"X";
- draw();
- };
- board.appendChild(btn);
- if(i%3===2)board.appendChild(document.createElement("br"));
- });
- }
- function win(){
- return [[0,1,2],[3,4,5],[6,7,8],[0,3,6],[1,4,7],[2,5,8],[0,4,8],[2,4,6]]
- .some(line=>line.every(i=>b[i]===turn));
- }
- draw();
+const canvas=document.getElementById('court');
+const ctx=canvas.getContext('2d');
+
+function begin(){
+let a=players[+document.getElementById('p1').value];
+let b=players[+document.getElementById('p2').value];
+let mode=document.getElementById('mode').value;
+let style=document.getElementById('courtStyle').value;
+let max=+document.getElementById('points').value;
+game={
+a,b,mode,style,max,scoreA:0,scoreB:0,
+x:350,y:200,vx:0,vy:0,
+pa:300,pb:300,playing:true,finished:false
+};
+paused=false;
+document.getElementById('matchTitle').textContent=a.name+' vs '+b.name;
+document.getElementById('instructions').textContent=
+mode==='two'?'Player 1: A/D. Player 2: Arrow keys. Press Serve.':
+mode==='watch'?'Watch the two bots compete!':
+'Move with A/D or arrow keys. Press SPACE to serve.';
+document.getElementById('status').textContent='Press SERVE to begin!';
+show('match');
+draw();
+stop();
+timer=setInterval(tick,25);
 }
 
-const c=document.getElementById("court"),ctx=c.getContext("2d");
-let p1=170,p2=170,bx=350,by=190,vx=4,vy=3,s1=0,s2=0;
+function serve(){
+if(!game.playing||game.finished||paused)return;
+if(game.vx===0&&game.vy===0){
+let direction=Math.random()<.5?-1:1;
+game.vx=direction*(3+game.a.power*.15);
+game.vy=(Math.random()-.5)*5;
+document.getElementById('status').textContent='Match on!';
+}
+}
+
 let keys={};
-document.addEventListener("keydown",e=>keys[e.key]=true);
-document.addEventListener("keyup",e=>keys[e.key]=false);
+document.addEventListener('keydown',e=>{
+keys[e.key.toLowerCase()]=true;
+if(e.code==='Space')serve();
+});
+document.addEventListener('keyup',e=>keys[e.key.toLowerCase()]=false);
 
-function resetBall(direction){
- bx=350;by=190;vx=4*direction;vy=3;
+function tick(){
+if(!game.playing||paused||game.finished)return;
+let g=game;
+if(g.mode!=='watch'){
+if(keys['a'])g.pa-=g.a.speed*.9;
+if(keys['d'])g.pa+=g.a.speed*.9;
 }
-function resetTennis(){
- s1=0;s2=0;p1=170;p2=170;resetBall(1);
- document.getElementById("s1").textContent=0;
- document.getElementById("s2").textContent=0;
+if(g.mode==='two'){
+if(keys['arrowleft'])g.pb-=g.b.speed*.9;
+if(keys['arrowright'])g.pb+=g.b.speed*.9;
+}else{
+let target=g.y-45;
+g.pb+=Math.max(-g.b.speed*.35,Math.min(g.b.speed*.35,target-g.pb));
 }
-function tennis(){
- if(keys["w"]||keys["W"])p1-=5;
- if(keys["s"]||keys["S"])p1+=5;
- if(keys["ArrowUp"])p2-=5;
- if(keys["ArrowDown"])p2+=5;
- p1=Math.max(0,Math.min(300,p1));
- p2=Math.max(0,Math.min(300,p2));
- bx+=vx;by+=vy;
- if(by<8||by>372)vy*=-1;
- if(bx<35&&bx>20&&by>p1&&by<p1+80)vx=Math.abs(vx)*1.05;
- if(bx>665&&bx<680&&by>p2&&by<p2+80)vx=-Math.abs(vx)*1.05;
- if(bx<0||bx>700){
- if(bx<0)s2++;else s1++;
- document.getElementById("s1").textContent=s1;
- document.getElementById("s2").textContent=s2;
- if(s1>=5||s2>=5){
- alert("Player "+(s1>=5?1:2)+" WINS!");
- resetTennis();
- }else resetBall(bx<0?1:-1);
- }
- drawCourt();
- requestAnimationFrame(tennis);
-}
-function drawCourt(){
- ctx.clearRect(0,0,700,380);
- ctx.strokeStyle="white";ctx.lineWidth=3;
- ctx.strokeRect(12,12,676,356);
- ctx.setLineDash([10,10]);
- ctx.beginPath();ctx.moveTo(350,12);ctx.lineTo(350,368);ctx.stroke();
- ctx.setLineDash([]);
- ctx.fillStyle="white";
- ctx.fillRect(20,p1,12,80);
- ctx.fillRect(668,p2,12,80);
- ctx.beginPath();ctx.arc(bx,by,9,0,Math.PI*2);ctx.fill();
-}
-tennis();
+g.pa=Math.max(10,Math.min(590,g.pa));
+g.pb=Math.max(10,Math.min(590,g.pb));
 
-function loadYT(){
- let url=document.getElementById("yturl").value;
- let id="";
- try{
- let u=new URL(url);
- if(u.hostname.includes("youtu.be"))id=u.pathname.slice(1);
- else id=u.searchParams.get("v")||u.pathname.split("/").pop();
- }catch(e){}
- if(!/^[\w-]{11}$/.test(id)){alert("Please enter a valid YouTube video link.");return;}
- document.getElementById("ytbox").innerHTML=
- '<iframe allowfullscreen src="https://www.youtube-nocookie.com/embed/'+id+'"></iframe>';
+if(g.vx!==0||g.vy!==0){
+g.x+=g.vx;g.y+=g.vy;
+if(g.y<15||g.y>385)g.vy*=-1;
+if(g.x<35&&g.vx<0){
+if(g.y>g.pa-5&&g.y<g.pa+105){
+g.vx=Math.abs(g.vx)*1.04;
+g.vy+=(g.y-g.pa-50)*.06;
+}else point(2);
 }
-function loadTT(){
- let url=document.getElementById("tturl").value;
- let match=url.match(/\/video\/(\d+)/);
- if(!match){alert("Please paste a TikTok video link.");return;}
- document.getElementById("ttbox").innerHTML=
- '<iframe allowfullscreen src="https://www.tiktok.com/player/v1/'+match[1]+'"></iframe>';
+if(g.x>665&&g.vx>0){
+if(g.y>g.pb-5&&g.y<g.pb+105){
+g.vx=-Math.abs(g.vx)*1.04;
+g.vy+=(g.y-g.pb-50)*.06;
+}else point(1);
+}
+if(Math.abs(g.vx)>9)g.vx=Math.sign(g.vx)*9;
+}
+draw();
+}
+
+function point(winner){
+let g=game;
+if(winner===1)g.scoreA++;
+else g.scoreB++;
+g.x=350;g.y=200;g.vx=0;g.vy=0;
+document.getElementById('score').textContent=g.scoreA+' - '+g.scoreB;
+document.getElementById('status').textContent=
+(winner===1?g.a.name:g.b.name)+' scores! Serve again.';
+if(g.scoreA>=g.max||g.scoreB>=g.max){
+g.finished=true;
+stop();
+document.getElementById('status').textContent=
+'🏆 '+(g.scoreA>g.scoreB?g.a.name:g.b.name)+' WINS!';
+if(game.type==='championship')championWon(g.scoreA>g.scoreB);
+}
+}
+
+function draw(){
+let g=game;
+if(!g.a)return;
+ctx.clearRect(0,0,700,400);
+ctx.fillStyle=g.style==='grass'?'#328451':g.style==='clay'?'#b96745':'#2876a8';
+ctx.fillRect(0,0,700,400);
+ctx.strokeStyle='white';ctx.lineWidth=3;
+ctx.strokeRect(12,12,676,376);
+ctx.beginPath();ctx.moveTo(350,12);ctx.lineTo(350,388);
+ctx.moveTo(350,100);ctx.lineTo(350,300);ctx.stroke();
+ctx.fillStyle='#fff';
+ctx.fillRect(20,g.pa,12,100);
+ctx.fillRect(668,g.pb,12,100);
+ctx.font='30px Arial';
+ctx.fillText(g.a.emoji,65,g.pa+65);
+ctx.fillText(g.b.emoji,600,g.pb+65);
+ctx.beginPath();ctx.arc(g.x,g.y,9,0,Math.PI*2);
+ctx.fillStyle='#eaff45';ctx.fill();
+}
+
+function pauseGame(){
+paused=!paused;
+document.getElementById('status').textContent=paused?'Paused':'Match resumed';
+}
+
+function stop(){
+if(timer)clearInterval(timer);
+timer=null;
+}
+
+function startTournament(){
+tournament=0;
+document.getElementById('bracket').innerHTML=
+'<h3>Round 1</h3><p>Choose your champion and beat 3 opponents!</p>'+
+'<select id="champPlayer">'+players.map((p,i)=>`<option value="${i}">${p.emoji} ${p.name}</option>`).join('')+'</select>'+
+'<button onclick="tournamentMatch()">PLAY ROUND 1</button>';
+}
+
+function tournamentMatch(){
+let champ=+document.getElementById('champPlayer').value;
+let opponent=(champ+tournament+1)%players.length;
+beginTournamentGame(champ,opponent);
+}
+
+function beginTournamentGame(a,b){
+game.type='championship';
+beginWithPlayers(a,b);
+}
+
+function beginWithPlayers(a,b){
+document.getElementById('p1').value=a;
+document.getElementById('p2').value=b;
+begin();
+game.type='championship';
+}
+
+function championWon(won){
+if(!won){
+document.getElementById('status').textContent='Tournament over! Try again.';
+return;
+}
+tournament++;
+if(tournament>=3){
+document.getElementById('status').textContent='👑 CHAMPION OF THE COURT!';
+}else{
+document.getElementById('status').textContent='Round '+tournament+' complete! Go back to start the next round.';
+}
 }
 </script>
 </body>
