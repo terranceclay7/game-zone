@@ -1,0 +1,241 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Unblockled Games 87</title>
+<style>
+*{box-sizing:border-box}
+body{
+ margin:0;background:#090b14;color:white;
+ font-family:Arial,sans-serif;
+}
+header{
+ background:#121629;padding:22px;
+ text-align:center;border-bottom:2px solid #704cff;
+}
+header h1{color:#a78bfa;margin:0;font-size:32px}
+header p{color:#aaa}
+.search{
+ display:block;margin:25px auto;
+ padding:14px;width:85%;max-width:500px;
+ border-radius:12px;border:2px solid #704cff;
+ background:#171b2c;color:white;font-size:16px;
+}
+.container{padding:20px;max-width:1100px;margin:auto}
+h2{color:#a78bfa}
+.games{
+ display:grid;
+ grid-template-columns:repeat(auto-fit,minmax(190px,1fr));
+ gap:18px;
+}
+.card{
+ background:#171b2c;padding:22px;
+ border-radius:15px;text-align:center;
+ border:1px solid #292e49;
+ transition:.2s;
+}
+.card:hover{transform:translateY(-5px);border-color:#a78bfa}
+.emoji{font-size:48px}
+.card h3{margin:12px 0}
+button{
+ background:#704cff;color:white;border:0;
+ padding:12px 18px;border-radius:9px;
+ cursor:pointer;font-weight:bold;
+}
+button:hover{background:#9275ff}
+#game{
+ display:none;background:#171b2c;
+ margin-top:25px;padding:25px;
+ border-radius:15px;text-align:center;
+}
+#game button{margin:5px}
+#board{
+ display:grid;grid-template-columns:repeat(3,85px);
+ justify-content:center;gap:7px;margin:20px;
+}
+.cell{
+ height:85px;background:#292e49;
+ font-size:35px;color:white;
+ border-radius:10px;display:grid;place-items:center;
+ cursor:pointer;
+}
+footer{text-align:center;padding:30px;color:#777}
+</style>
+</head>
+<body>
+
+<header>
+<h1>🎮 UNBLOCKLED GAMES 87</h1>
+<p>Your next gaming adventure starts here!</p>
+</header>
+
+<input class="search" id="search"
+placeholder="🔍 Search for a game..."
+oninput="searchGames()">
+
+<div class="container">
+<h2>🔥 Popular Games</h2>
+
+<div class="games" id="games">
+
+<div class="card" data-name="tic tac toe">
+<div class="emoji">⭕</div>
+<h3>Tic Tac Toe</h3>
+<button onclick="ticTacToe()">PLAY NOW</button>
+</div>
+
+<div class="card" data-name="clicker">
+<div class="emoji">👆</div>
+<h3>Clicker Game</h3>
+<button onclick="clicker()">PLAY NOW</button>
+</div>
+
+<div class="card" data-name="reaction test">
+<div class="emoji">⚡</div>
+<h3>Reaction Test</h3>
+<button onclick="reaction()">PLAY NOW</button>
+</div>
+
+<div class="card" data-name="number guessing">
+<div class="emoji">🔢</div>
+<h3>Number Guessing</h3>
+<button onclick="guessGame()">PLAY NOW</button>
+</div>
+
+</div>
+
+<div id="game">
+<h2 id="gameTitle">Game</h2>
+<div id="gameContent"></div>
+<br>
+<button onclick="closeGame()">CLOSE GAME</button>
+</div>
+</div>
+
+<footer>
+<p>UNBLOCKLED GAMES 87 © 2026</p>
+<p>Made for gamers ❤️</p>
+</footer>
+
+<script>
+function searchGames(){
+ let q=document.getElementById("search").value.toLowerCase();
+ document.querySelectorAll(".card").forEach(card=>{
+ card.style.display=card.dataset.name.includes(q)?"block":"none";
+ });
+}
+
+function openGame(name,html){
+ document.getElementById("game").style.display="block";
+ document.getElementById("gameTitle").textContent=name;
+ document.getElementById("gameContent").innerHTML=html;
+ document.getElementById("game").scrollIntoView({behavior:"smooth"});
+}
+
+function closeGame(){
+ document.getElementById("game").style.display="none";
+}
+
+function ticTacToe(){
+ let board=["","","","","","","","",""];
+ let turn="X";
+ function draw(){
+ let html='<div id="board">';
+ board.forEach((v,i)=>{
+ html+=`<div class="cell" onclick="move(${i})">${v}</div>`;
+ });
+ html+='</div><p id="status">Player X turn</p><button onclick="ticTacToe()">Restart</button>';
+ document.getElementById("gameContent").innerHTML=html;
+ }
+ window.move=function(i){
+ if(board[i]||winner())return;
+ board[i]=turn;
+ if(winner()){
+ draw();
+ document.getElementById("status").textContent="Player "+turn+" wins! 🎉";
+ return;
+ }
+ if(board.every(Boolean)){
+ draw();
+ document.getElementById("status").textContent="It's a draw!";
+ return;
+ }
+ turn=turn==="X"?"O":"X";
+ draw();
+ };
+ function winner(){
+ return [[0,1,2],[3,4,5],[6,7,8],[0,3,6],[1,4,7],[2,5,8],[0,4,8],[2,4,6]]
+ .some(line=>line.every(i=>board[i]===turn));
+ }
+ openGame("⭕ Tic Tac Toe","");
+ draw();
+}
+
+function clicker(){
+ let score=0;
+ openGame("👆 Clicker Game",`
+ <h1 id="score">0</h1>
+ <button onclick="addClick()">CLICK ME!</button>
+ <p>Click as many times as you can!</p>
+ <button onclick="resetClick()">Reset</button>
+ `);
+ window.addClick=function(){
+ score++;
+ document.getElementById("score").textContent=score;
+ };
+ window.resetClick=function(){
+ score=0;
+ document.getElementById("score").textContent=0;
+ };
+}
+
+function reaction(){
+ openGame("⚡ Reaction Test",`
+ <h3 id="reactionText">Press START when ready!</h3>
+ <button onclick="startReaction()">START</button>
+ <button id="reactButton" style="display:none;background:green"
+ onclick="finishReaction()">CLICK NOW!</button>
+ <h2 id="reactionResult"></h2>
+ `);
+}
+let reactionStart=0,reactionTimer;
+function startReaction(){
+ clearTimeout(reactionTimer);
+ document.getElementById("reactionText").textContent="Wait for green...";
+ document.getElementById("reactButton").style.display="none";
+ document.getElementById("reactionResult").textContent="";
+ reactionTimer=setTimeout(()=>{
+ reactionStart=Date.now();
+ document.getElementById("reactionText").textContent="GO GO GO!";
+ document.getElementById("reactButton").style.display="inline-block";
+ },1500+Math.random()*3500);
+}
+function finishReaction(){
+ if(!reactionStart)return;
+ document.getElementById("reactionResult").textContent=
+ (Date.now()-reactionStart)+" milliseconds!";
+ reactionStart=0;
+}
+
+function guessGame(){
+ let number=Math.floor(Math.random()*20)+1;
+ openGame("🔢 Number Guessing",`
+ <p>Guess a number between 1 and 20!</p>
+ <input id="guess" type="number" min="1" max="20"
+ style="padding:12px;width:100px;border-radius:8px">
+ <button onclick="checkGuess()">GUESS</button>
+ <h3 id="guessResult"></h3>
+ <button onclick="guessGame()">New Game</button>
+ `);
+ window.checkGuess=function(){
+ let n=Number(document.getElementById("guess").value);
+ let result=document.getElementById("guessResult");
+ if(n===number)result.textContent="YOU WIN! 🎉";
+ else if(n<number)result.textContent="Too low! Try again.";
+ else result.textContent="Too high! Try again.";
+ };
+}
+</script>
+</body>
+</html>
