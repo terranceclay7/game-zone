@@ -1,322 +1,141 @@
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Tennis Legends</title>
+<title>GAME ZONE</title>
 <style>
 *{box-sizing:border-box}
-body{margin:0;background:#101426;color:white;font-family:Arial}
-header{text-align:center;padding:20px;background:#1c2542}
-h1{margin:5px;color:#8cffb0}
-main{max-width:1050px;margin:auto;padding:16px}
-button,select{background:#33466c;color:white;border:0;padding:12px;border-radius:9px;cursor:pointer;margin:4px}
-button:hover{background:#506a9d}
-.screen{display:none}
-.screen.active{display:block}
-.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(145px,1fr));gap:12px}
-.player{background:#202d4c;padding:13px;border-radius:12px;text-align:center;cursor:pointer;border:2px solid transparent}
-.player.selected{border-color:#83ffae}
-.avatar{font-size:48px;padding:12px}
-.stats{font-size:12px;color:#b9c9e8}
-.panel{background:#1b2541;border-radius:14px;padding:16px;margin:14px 0}
-canvas{width:100%;background:#328451;border:4px solid white;border-radius:8px}
-#score{text-align:center;font-size:26px;margin:12px}
-.hidden{display:none}
+body{margin:0;background:#101116;color:white;font-family:Arial,sans-serif}
+header{height:70px;background:#191b25;display:flex;align-items:center;justify-content:space-between;padding:0 25px;border-bottom:1px solid #30313c}
+.logo{font-size:25px;font-weight:bold;color:#8b9dff}
+nav{display:flex;gap:10px}
+button{cursor:pointer;border:0;border-radius:8px;background:#292c3b;color:white;padding:11px 16px}
+button:hover{background:#48517b}
+main{max-width:1200px;margin:auto;padding:25px}
+.hero{text-align:center;padding:35px 10px}
+.hero h1{font-size:42px;margin:5px}
+.hero p{color:#a7a9b8}
+.search{width:100%;max-width:650px;padding:16px;border-radius:10px;border:1px solid #383b4d;background:#20222e;color:white;font-size:16px;margin-top:20px}
+.categories{display:flex;gap:9px;flex-wrap:wrap;margin:20px 0}
+.category.active{background:#5966bd}
+h2{margin-top:30px}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(165px,1fr));gap:15px}
+.game{background:#1e202b;border-radius:12px;overflow:hidden;cursor:pointer;border:1px solid #30313b;transition:.2s}
+.game:hover{transform:translateY(-4px);border-color:#7888ff}
+.art{height:115px;display:flex;align-items:center;justify-content:center;font-size:55px;background:linear-gradient(135deg,#303b69,#202333)}
+.info{padding:13px}
+.info strong{display:block;margin-bottom:5px}
+.info small{color:#9da3b9}
+a{text-decoration:none;color:inherit}
+.empty{color:#aaa;display:none;padding:20px}
+footer{text-align:center;color:#777;padding:30px}
 </style>
 </head>
 <body>
+
 <header>
-<h1>🎾 TENNIS LEGENDS</h1>
-<p>Choose your player. Rule the court.</p>
+<div class="logo">🎮 GAME ZONE</div>
+<nav>
+<button onclick="showGames()">Home</button>
+<button onclick="window.open('https://www.youtube.com','_blank')">YouTube</button>
+<button onclick="window.open('https://www.tiktok.com','_blank')">TikTok</button>
+</nav>
 </header>
 
 <main>
-<section id="menu" class="screen active">
-<div class="panel">
-<h2>Choose your game</h2>
-<button onclick="openSetup('exhibition')">🎾 Exhibition</button>
-<button onclick="openSetup('championship')">🏆 Championship</button>
-</div>
-<div class="panel">
-<h2>Character collection</h2>
-<div id="collection" class="grid"></div>
-</div>
+<section class="hero">
+<h1>PLAY SOMETHING AWESOME</h1>
+<p>Find your next favorite game.</p>
+<input class="search" id="search" placeholder="🔎 Search games..." oninput="filterGames()">
 </section>
 
-<section id="setup" class="screen">
-<div class="panel">
-<h2>Choose your players</h2>
-<p>Player 1</p>
-<select id="p1"></select>
-<p>Player 2 / Bot</p>
-<select id="p2"></select>
-<p>Game type</p>
-<select id="mode">
-<option value="bot">You vs Bot</option>
-<option value="two">Two players</option>
-<option value="watch">Bot vs Bot</option>
-</select>
-<p>Court</p>
-<select id="courtStyle">
-<option value="grass">Grass</option>
-<option value="clay">Clay</option>
-<option value="hard">Hard court</option>
-</select>
-<p>Points to win</p>
-<select id="points">
-<option>5</option><option>10</option><option>15</option>
-</select>
-<button onclick="begin()">START MATCH 🚀</button>
-<button onclick="goMenu()">BACK</button>
+<div class="categories">
+<button class="category active" onclick="choose('All',this)">All Games</button>
+<button class="category" onclick="choose('Action',this)">Action</button>
+<button class="category" onclick="choose('Sports',this)">Sports</button>
+<button class="category" onclick="choose('Puzzle',this)">Puzzle</button>
+<button class="category" onclick="choose('Arcade',this)">Arcade</button>
+<button class="category" onclick="choose('Strategy',this)">Strategy</button>
 </div>
-</section>
 
-<section id="match" class="screen">
-<div class="panel">
-<h2 id="matchTitle">Exhibition Match</h2>
-<div id="score">0 - 0</div>
-<canvas id="court" width="700" height="400"></canvas>
-<p id="instructions">Move with A and D. Press SPACE to serve.</p>
-<div style="text-align:center">
-<button onclick="serve()">🎾 SERVE</button>
-<button onclick="pauseGame()">⏸ Pause</button>
-<button onclick="goMenu()">🏠 Menu</button>
-</div>
-<p id="status" style="text-align:center">Ready!</p>
-</div>
-</section>
+<h2 id="heading">All Games</h2>
+<div class="grid" id="games"></div>
+<div class="empty" id="empty">No games found. Try another search!</div>
 
-<section id="champ" class="screen">
-<div class="panel">
-<h2>🏆 Championship</h2>
-<div id="bracket"></div>
-<button onclick="goMenu()">Home</button>
+<h2>⭐ More Places to Play</h2>
+<div class="grid">
+<a class="game" href="https://poki.com/" target="_blank">
+<div class="art">🎮</div><div class="info"><strong>Poki</strong><small>More browser games</small></div>
+</a>
+<a class="game" href="https://www.crazygames.com/" target="_blank">
+<div class="art">🕹️</div><div class="info"><strong>CrazyGames</strong><small>Explore more games</small></div>
+</a>
 </div>
-</section>
 </main>
 
+<footer>GAME ZONE • PLAY MORE</footer>
+
 <script>
-const players=[
-{name:"Volt",emoji:"⚡",speed:9,power:6,skill:"Lightning speed"},
-{name:"Blaze",emoji:"🔥",speed:6,power:10,skill:"Fire smash"},
-{name:"Shadow",emoji:"🥷",speed:10,power:6,skill:"Quick movement"},
-{name:"Frost",emoji:"❄️",speed:7,power:8,skill:"Ice precision"},
-{name:"Byte",emoji:"🤖",speed:8,power:8,skill:"Perfect accuracy"},
-{name:"Zorp",emoji:"👽",speed:7,power:9,skill:"Alien curve"},
-{name:"Titan",emoji:"🦾",speed:4,power:10,skill:"Heavy shots"},
-{name:"Ghost",emoji:"👻",speed:9,power:7,skill:"Ghost dash"},
-{name:"Dragon",emoji:"🐉",speed:7,power:10,skill:"Dragon smash"},
-{name:"Ninja Cat",emoji:"🐱",speed:10,power:5,skill:"Cat reflexes"},
-{name:"Wizard",emoji:"🧙",speed:6,power:9,skill:"Magic serve"},
-{name:"Golden King",emoji:"👑",speed:8,power:9,skill:"Royal power"}
+const games=[
+{name:"2048",icon:"🔢",category:"Puzzle",url:"https://play2048.co/"},
+{name:"Tetris",icon:"🧱",category:"Puzzle",url:"https://tetris.com/play-tetris"},
+{name:"Chess",icon:"♟️",category:"Strategy",url:"https://www.chess.com/play/computer"},
+{name:"Slither.io",icon:"🐍",category:"Arcade",url:"https://slither.io/"},
+{name:"Agar.io",icon:"🔵",category:"Arcade",url:"https://agar.io/"},
+{name:"Paper.io",icon:"📄",category:"Arcade",url:"https://paper-io.com/"},
+{name:"Cookie Clicker",icon:"🍪",category:"Arcade",url:"https://orteil.dashnet.org/cookieclicker/"},
+{name:"Basketball Stars",icon:"🏀",category:"Sports",url:"https://www.crazygames.com/game/basketball-stars"},
+{name:"Soccer Skills",icon:"⚽",category:"Sports",url:"https://www.crazygames.com/t/soccer"},
+{name:"Moto X3M",icon:"🏍️",category:"Sports",url:"https://www.coolmathgames.com/0-moto-x3m"},
+{name:"Drift Hunters",icon:"🏎️",category:"Sports",url:"https://www.crazygames.com/game/drift-hunters"},
+{name:"Crossy Road",icon:"🐔",category:"Arcade",url:"https://poki.com/en/g/crossy-road"},
+{name:"Geometry Dash",icon:"🟪",category:"Arcade",url:"https://www.geometrydash.com/"},
+{name:"Little Alchemy 2",icon:"🧪",category:"Puzzle",url:"https://littlealchemy2.com/"},
+{name:"Fireboy & Watergirl",icon:"🔥",category:"Puzzle",url:"https://www.coolmathgames.com/0-fireboy-and-water-girl"},
+{name:"Run 3",icon:"🏃",category:"Action",url:"https://www.coolmathgames.com/0-run-3"},
+{name:"Subway Surfers",icon:"🚇",category:"Action",url:"https://poki.com/en/g/subway-surfers"},
+{name:"Temple Run 2",icon:"🏃‍♂️",category:"Action",url:"https://poki.com/en/g/temple-run-2"},
+{name:"Stickman Hook",icon:"🪝",category:"Action",url:"https://poki.com/en/g/stickman-hook"},
+{name:"Minecraft",icon:"⛏️",category:"Action",url:"https://classic.minecraft.net/"},
+{name:"Wordle",icon:"🔤",category:"Puzzle",url:"https://www.nytimes.com/games/wordle/index.html"},
+{name:"Solitaire",icon:"🃏",category:"Strategy",url:"https://www.solitr.com/"},
+{name:"Checkers",icon:"🔴",category:"Strategy",url:"https://www.coolmathgames.com/0-checkers"},
+{name:"Pac-Man",icon:"👾",category:"Arcade",url:"https://www.google.com/logos/2010/pacman10-i.html"}
 ];
 
-let selected=0;
-let game={},timer=null,paused=false;
-let tournament=0;
+let category="All";
 
-function show(id){
-document.querySelectorAll('.screen').forEach(x=>x.classList.remove('active'));
-document.getElementById(id).classList.add('active');
-}
-function goMenu(){
-stop();
-show('menu');
-}
 function render(){
-let html='';
-players.forEach((p,i)=>{
-html+=`<div class="player ${selected===i?'selected':''}" onclick="selected=${i};render()">
-<div class="avatar">${p.emoji}</div>
-<strong>${p.name}</strong>
-<div class="stats">${p.skill}<br>Speed ${p.speed}/10<br>Power ${p.power}/10</div>
-</div>`;
-});
-document.getElementById('collection').innerHTML=html;
-let options=players.map((p,i)=>`<option value="${i}">${p.emoji} ${p.name}</option>`).join('');
-document.getElementById('p1').innerHTML=options;
-document.getElementById('p2').innerHTML=options;
-document.getElementById('p1').value=selected;
-document.getElementById('p2').value=(selected+1)%players.length;
+let q=document.getElementById('search').value.toLowerCase();
+let results=games.filter(g=>
+(category==="All"||g.category===category)&&
+g.name.toLowerCase().includes(q)
+);
+document.getElementById('games').innerHTML=results.map(g=>`
+<a class="game" href="${g.url}" target="_blank" rel="noopener">
+<div class="art">${g.icon}</div>
+<div class="info"><strong>${g.name}</strong><small>${g.category}</small></div>
+</a>`).join('');
+document.getElementById('empty').style.display=results.length?'none':'block';
+document.getElementById('heading').textContent=category==="All"?"All Games":category+" Games";
+}
+
+function choose(c,btn){
+category=c;
+document.querySelectorAll('.category').forEach(x=>x.classList.remove('active'));
+btn.classList.add('active');
+render();
+}
+function filterGames(){render()}
+function showGames(){
+category='All';
+document.getElementById('search').value='';
+document.querySelectorAll('.category').forEach(x=>x.classList.remove('active'));
+document.querySelector('.category').classList.add('active');
+render();
 }
 render();
-
-function openSetup(type){
-game.type=type;
-if(type==='championship'){
-show('champ');
-startTournament();
-}else show('setup');
-}
-
-const canvas=document.getElementById('court');
-const ctx=canvas.getContext('2d');
-
-function begin(){
-let a=players[+document.getElementById('p1').value];
-let b=players[+document.getElementById('p2').value];
-let mode=document.getElementById('mode').value;
-let style=document.getElementById('courtStyle').value;
-let max=+document.getElementById('points').value;
-game={
-a,b,mode,style,max,scoreA:0,scoreB:0,
-x:350,y:200,vx:0,vy:0,
-pa:300,pb:300,playing:true,finished:false
-};
-paused=false;
-document.getElementById('matchTitle').textContent=a.name+' vs '+b.name;
-document.getElementById('instructions').textContent=
-mode==='two'?'Player 1: A/D. Player 2: Arrow keys. Press Serve.':
-mode==='watch'?'Watch the two bots compete!':
-'Move with A/D or arrow keys. Press SPACE to serve.';
-document.getElementById('status').textContent='Press SERVE to begin!';
-show('match');
-draw();
-stop();
-timer=setInterval(tick,25);
-}
-
-function serve(){
-if(!game.playing||game.finished||paused)return;
-if(game.vx===0&&game.vy===0){
-let direction=Math.random()<.5?-1:1;
-game.vx=direction*(3+game.a.power*.15);
-game.vy=(Math.random()-.5)*5;
-document.getElementById('status').textContent='Match on!';
-}
-}
-
-let keys={};
-document.addEventListener('keydown',e=>{
-keys[e.key.toLowerCase()]=true;
-if(e.code==='Space')serve();
-});
-document.addEventListener('keyup',e=>keys[e.key.toLowerCase()]=false);
-
-function tick(){
-if(!game.playing||paused||game.finished)return;
-let g=game;
-if(g.mode!=='watch'){
-if(keys['a'])g.pa-=g.a.speed*.9;
-if(keys['d'])g.pa+=g.a.speed*.9;
-}
-if(g.mode==='two'){
-if(keys['arrowleft'])g.pb-=g.b.speed*.9;
-if(keys['arrowright'])g.pb+=g.b.speed*.9;
-}else{
-let target=g.y-45;
-g.pb+=Math.max(-g.b.speed*.35,Math.min(g.b.speed*.35,target-g.pb));
-}
-g.pa=Math.max(10,Math.min(590,g.pa));
-g.pb=Math.max(10,Math.min(590,g.pb));
-
-if(g.vx!==0||g.vy!==0){
-g.x+=g.vx;g.y+=g.vy;
-if(g.y<15||g.y>385)g.vy*=-1;
-if(g.x<35&&g.vx<0){
-if(g.y>g.pa-5&&g.y<g.pa+105){
-g.vx=Math.abs(g.vx)*1.04;
-g.vy+=(g.y-g.pa-50)*.06;
-}else point(2);
-}
-if(g.x>665&&g.vx>0){
-if(g.y>g.pb-5&&g.y<g.pb+105){
-g.vx=-Math.abs(g.vx)*1.04;
-g.vy+=(g.y-g.pb-50)*.06;
-}else point(1);
-}
-if(Math.abs(g.vx)>9)g.vx=Math.sign(g.vx)*9;
-}
-draw();
-}
-
-function point(winner){
-let g=game;
-if(winner===1)g.scoreA++;
-else g.scoreB++;
-g.x=350;g.y=200;g.vx=0;g.vy=0;
-document.getElementById('score').textContent=g.scoreA+' - '+g.scoreB;
-document.getElementById('status').textContent=
-(winner===1?g.a.name:g.b.name)+' scores! Serve again.';
-if(g.scoreA>=g.max||g.scoreB>=g.max){
-g.finished=true;
-stop();
-document.getElementById('status').textContent=
-'🏆 '+(g.scoreA>g.scoreB?g.a.name:g.b.name)+' WINS!';
-if(game.type==='championship')championWon(g.scoreA>g.scoreB);
-}
-}
-
-function draw(){
-let g=game;
-if(!g.a)return;
-ctx.clearRect(0,0,700,400);
-ctx.fillStyle=g.style==='grass'?'#328451':g.style==='clay'?'#b96745':'#2876a8';
-ctx.fillRect(0,0,700,400);
-ctx.strokeStyle='white';ctx.lineWidth=3;
-ctx.strokeRect(12,12,676,376);
-ctx.beginPath();ctx.moveTo(350,12);ctx.lineTo(350,388);
-ctx.moveTo(350,100);ctx.lineTo(350,300);ctx.stroke();
-ctx.fillStyle='#fff';
-ctx.fillRect(20,g.pa,12,100);
-ctx.fillRect(668,g.pb,12,100);
-ctx.font='30px Arial';
-ctx.fillText(g.a.emoji,65,g.pa+65);
-ctx.fillText(g.b.emoji,600,g.pb+65);
-ctx.beginPath();ctx.arc(g.x,g.y,9,0,Math.PI*2);
-ctx.fillStyle='#eaff45';ctx.fill();
-}
-
-function pauseGame(){
-paused=!paused;
-document.getElementById('status').textContent=paused?'Paused':'Match resumed';
-}
-
-function stop(){
-if(timer)clearInterval(timer);
-timer=null;
-}
-
-function startTournament(){
-tournament=0;
-document.getElementById('bracket').innerHTML=
-'<h3>Round 1</h3><p>Choose your champion and beat 3 opponents!</p>'+
-'<select id="champPlayer">'+players.map((p,i)=>`<option value="${i}">${p.emoji} ${p.name}</option>`).join('')+'</select>'+
-'<button onclick="tournamentMatch()">PLAY ROUND 1</button>';
-}
-
-function tournamentMatch(){
-let champ=+document.getElementById('champPlayer').value;
-let opponent=(champ+tournament+1)%players.length;
-beginTournamentGame(champ,opponent);
-}
-
-function beginTournamentGame(a,b){
-game.type='championship';
-beginWithPlayers(a,b);
-}
-
-function beginWithPlayers(a,b){
-document.getElementById('p1').value=a;
-document.getElementById('p2').value=b;
-begin();
-game.type='championship';
-}
-
-function championWon(won){
-if(!won){
-document.getElementById('status').textContent='Tournament over! Try again.';
-return;
-}
-tournament++;
-if(tournament>=3){
-document.getElementById('status').textContent='👑 CHAMPION OF THE COURT!';
-}else{
-document.getElementById('status').textContent='Round '+tournament+' complete! Go back to start the next round.';
-}
-}
 </script>
 </body>
 </html>
