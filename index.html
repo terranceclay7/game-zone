@@ -6,89 +6,163 @@
 <title>Lunar V2</title>
 <style>
 *{box-sizing:border-box}
-body{margin:0;background:#100d20;color:white;font-family:Arial,sans-serif}
-header{background:#19142d;padding:12px;display:flex;gap:8px;align-items:center}
-.logo{font-size:23px;font-weight:bold;color:#b9a0ff;margin-right:12px}
+body{margin:0;background:#100d20;color:white;font-family:Arial}
+header{background:#19142d;padding:12px;display:flex;gap:7px;align-items:center;flex-wrap:wrap}
+.logo{font-size:22px;font-weight:bold;color:#c4a8ff;margin-right:10px}
 button,input{border:0;border-radius:8px;padding:11px}
 button{background:#30264d;color:white;cursor:pointer}
 button:hover{background:#59418b}
-input{background:#211b36;color:white;flex:1;min-width:80px}
-.tabs{background:#171228;padding:8px;display:flex;gap:8px}
-.tab{padding:9px 16px;background:#30264d;border-radius:8px}
-main{text-align:center;padding:55px 15px}
-#clock{font-size:clamp(55px,12vw,100px);font-weight:bold;letter-spacing:3px}
+input{background:#211b36;color:white;flex:1;min-width:130px}
+#tabs{display:flex;gap:6px;background:#151125;padding:8px;overflow-x:auto}
+.tab{white-space:nowrap;background:#30264d;padding:10px;border-radius:8px;cursor:pointer}
+.tab.active{background:#6748a5}
+#home{text-align:center;padding:55px 12px}
+#clock{font-size:clamp(55px,12vw,100px);font-weight:bold}
 #date{color:#b7a9d8;margin:12px}
-#quote{color:#a99bc9;margin:30px}
-.shortcuts{display:flex;justify-content:center;gap:15px;flex-wrap:wrap;margin:35px auto;max-width:650px}
-.shortcut{width:100px;padding:18px 8px;background:#211b36;border:1px solid #40345e;border-radius:14px;color:white;text-decoration:none}
+#quote{color:#b7a9d8;margin:30px}
+.shortcuts{display:flex;justify-content:center;gap:14px;flex-wrap:wrap;margin:35px auto;max-width:700px}
+.shortcut{width:100px;padding:18px 8px;background:#211b36;border:1px solid #40345e;border-radius:14px;color:white;text-decoration:none;cursor:pointer}
 .shortcut img{width:38px;height:38px;display:block;margin:0 auto 12px}
-.shortcut:hover{background:#392b59}
-#browser{display:none;height:calc(100vh - 120px);padding:10px}
-#browser iframe{width:100%;height:100%;border:1px solid #40345e;border-radius:10px;background:white}
-footer{position:fixed;bottom:0;left:0;right:0;background:#19142d;padding:12px;color:#a99bc9;font-size:12px;display:flex;justify-content:space-between}
+#viewer{display:none;height:calc(100vh - 145px);padding:10px}
+iframe{width:100%;height:100%;border:1px solid #40345e;border-radius:10px;background:white}
+#blocked{display:none;text-align:center;padding:30px;color:#cbbce9}
+footer{position:fixed;bottom:0;left:0;right:0;background:#19142d;padding:10px;color:#a99bc9;font-size:12px;display:flex;justify-content:space-between}
 </style>
 </head>
 <body>
+
 <header>
 <div class="logo">☾ LUNAR</div>
 <button onclick="home()">⌂</button>
 <button onclick="back()">←</button>
 <button onclick="forward()">→</button>
 <button onclick="reload()">↻</button>
-<input id="address" placeholder="Search or enter a website..." onkeydown="if(event.key==='Enter')go()">
+<input id="address" placeholder="Enter a link or search..." onkeydown="if(event.key==='Enter')go()">
 <button onclick="go()">Go</button>
+<button onclick="newTab()">＋</button>
 </header>
-<div class="tabs"><div class="tab">🌙 Lunar Home</div></div>
+
+<div id="tabs"></div>
+
 <main id="home">
-<div id="clock">00:00:00 AM</div>
+<div id="clock"></div>
 <div id="date"></div>
 <div id="quote">Your universe. Your space.</div>
 <div class="shortcuts">
-<a class="shortcut" href="#" onclick="openSite('https://www.youtube.com');return false"><img src="https://www.google.com/s2/favicons?domain=youtube.com&sz=64">YouTube</a>
-<a class="shortcut" href="#" onclick="openSite('https://x.com');return false"><img src="https://www.google.com/s2/favicons?domain=x.com&sz=64">X</a>
-<a class="shortcut" href="#" onclick="openSite('https://github.com');return false"><img src="https://www.google.com/s2/favicons?domain=github.com&sz=64">GitHub</a>
-<a class="shortcut" href="#" onclick="openSite('https://discord.com');return false"><img src="https://www.google.com/s2/favicons?domain=discord.com&sz=64">Discord</a>
-<a class="shortcut" href="#" onclick="openSite('https://google.com');return false"><img src="https://www.google.com/s2/favicons?domain=google.com&sz=64">Google</a>
-<a class="shortcut" href="#" onclick="openSite('https://wikipedia.org');return false"><img src="https://www.google.com/s2/favicons?domain=wikipedia.org&sz=64">Wikipedia</a>
+<div class="shortcut" onclick="navigate('https://www.youtube.com')"><img src="https://www.google.com/s2/favicons?domain=youtube.com&sz=64">YouTube</div>
+<div class="shortcut" onclick="navigate('https://x.com')"><img src="https://www.google.com/s2/favicons?domain=x.com&sz=64">X</div>
+<div class="shortcut" onclick="navigate('https://github.com')"><img src="https://www.google.com/s2/favicons?domain=github.com&sz=64">GitHub</div>
+<div class="shortcut" onclick="navigate('https://discord.com')"><img src="https://www.google.com/s2/favicons?domain=discord.com&sz=64">Discord</div>
+<div class="shortcut" onclick="navigate('https://google.com')"><img src="https://www.google.com/s2/favicons?domain=google.com&sz=64">Google</div>
+<div class="shortcut" onclick="navigate('https://wikipedia.org')"><img src="https://www.google.com/s2/favicons?domain=wikipedia.org&sz=64">Wikipedia</div>
 </div>
 </main>
-<section id="browser"><iframe id="frame" title="Website viewer"></iframe></section>
-<footer><span>🌙 Lunar V2</span><span>Ready • Home</span></footer>
+
+<section id="viewer">
+<iframe id="frame" title="Lunar website view"></iframe>
+<div id="blocked">
+<h2>This website may not allow embedding.</h2>
+<p>Try another website or use a site that permits being displayed inside Lunar.</p>
+</div>
+</section>
+
+<footer><span>🌙 Lunar V2</span><span>Internal browser</span></footer>
+
 <script>
-let historyList=[],position=-1;
+let tabs=[];
+let current=0;
+
+function makeTab(){
+return {history:[],pos:-1,url:""};
+}
+
+function newTab(){
+tabs.push(makeTab());
+current=tabs.length-1;
+home();
+renderTabs();
+}
+
+function renderTabs(){
+document.getElementById("tabs").innerHTML="";
+tabs.forEach((tab,i)=>{
+let el=document.createElement("div");
+el.className="tab"+(i===current?" active":"");
+el.textContent="Lunar "+(i+1);
+el.onclick=()=>{current=i;renderTabs();if(tabs[i].url)show(tabs[i].url);else home();};
+document.getElementById("tabs").appendChild(el);
+});
+}
+
+function navigate(url){
+if(!tabs.length) newTab();
+let tab=tabs[current];
+tab.history=tab.history.slice(0,tab.pos+1);
+tab.history.push(url);
+tab.pos++;
+tab.url=url;
+show(url);
+renderTabs();
+}
+
+function show(url){
+document.getElementById("home").style.display="none";
+document.getElementById("viewer").style.display="block";
+document.getElementById("blocked").style.display="none";
+document.getElementById("frame").style.display="block";
+document.getElementById("address").value=url;
+document.getElementById("frame").src=url;
+}
+
+function go(){
+let value=document.getElementById("address").value.trim();
+if(!value)return;
+let url;
+if(/^https?:\/\//i.test(value))url=value;
+else if(value.includes(".")&&!value.includes(" "))url="https://"+value;
+else url="https://www.google.com/search?q="+encodeURIComponent(value);
+navigate(url);
+}
+
+function home(){
+document.getElementById("viewer").style.display="none";
+document.getElementById("home").style.display="block";
+document.getElementById("address").value="";
+}
+
+function back(){
+let tab=tabs[current];
+if(tab&&tab.pos>0){
+tab.pos--;
+tab.url=tab.history[tab.pos];
+show(tab.url);
+}
+}
+
+function forward(){
+let tab=tabs[current];
+if(tab&&tab.pos<tab.history.length-1){
+tab.pos++;
+tab.url=tab.history[tab.pos];
+show(tab.url);
+}
+}
+
+function reload(){
+let frame=document.getElementById("frame");
+try{frame.contentWindow.location.reload();}
+catch(e){frame.src=frame.src;}
+}
+
 function updateClock(){
 let d=new Date();
-document.getElementById('clock').textContent=d.toLocaleTimeString('en-US');
-document.getElementById('date').textContent=d.toLocaleDateString(undefined,{weekday:'long',year:'numeric',month:'long',day:'numeric'});
+document.getElementById("clock").textContent=d.toLocaleTimeString();
+document.getElementById("date").textContent=d.toLocaleDateString(undefined,{weekday:"long",year:"numeric",month:"long",day:"numeric"});
 }
-setInterval(updateClock,1000);updateClock();
-function openSite(url){
-historyList=historyList.slice(0,position+1);
-historyList.push(url);position++;
-showSite(url);
-}
-function showSite(url){
-document.getElementById('home').style.display='none';
-document.getElementById('browser').style.display='block';
-document.getElementById('address').value=url;
-document.getElementById('frame').src=url;
-}
-function go(){
-let v=document.getElementById('address').value.trim();
-if(!v)return;
-let url=/^https?:\/\//i.test(v)?v:
-v.includes('.')&&!v.includes(' ')?'https://'+v:
-'https://www.google.com/search?q='+encodeURIComponent(v);
-openSite(url);
-}
-function home(){
-document.getElementById('browser').style.display='none';
-document.getElementById('home').style.display='block';
-document.getElementById('address').value='';
-}
-function back(){if(position>0){position--;showSite(historyList[position]);}}
-function forward(){if(position<historyList.length-1){position++;showSite(historyList[position]);}}
-function reload(){document.getElementById('frame').contentWindow.location.reload();}
+
+setInterval(updateClock,1000);
+updateClock();
+newTab();
 </script>
 </body>
 </html>
